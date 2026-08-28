@@ -1,0 +1,15 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment variables and secrets
+.env
+*.pem
+gcp_deploy_key
+gcp_deploy_key.pub
+
+# OS files
+.DS_Store
