@@ -15,10 +15,3 @@ def predict(request: PredictRequest):
     # 입력 데이터는 request.data에 담겨 옵니다.
     prediction = model.predict([request.data])
     return {"class_index": int(prediction[0])}
-
-@app.get("/deployment-check")
-def deployment_check():
-    return {
-        "message": "GitHub Actions CI/CD deployment succeeded",
-        "version": "test-1"
-    }
