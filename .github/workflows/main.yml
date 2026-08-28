@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push and Deploy
 
 on:
   push:
@@ -27,3 +27,26 @@ jobs:
           tags: |
             ukira62/iris-classifier:latest
             ukira62/iris-classifier:${{ github.sha }}
+
+  deploy-to-gcp:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GCP VM
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USERNAME }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          script_stop: true
+          script: |
+            docker pull ukira62/iris-classifier:latest
+            docker stop iris-api || true
+            docker rm iris-api || true
+            docker run -d \
+              --name iris-api \
+              --restart unless-stopped \
+              -p 80:8000 \
+              ukira62/iris-classifier:latest
+            docker ps --filter "name=iris-api"
